@@ -12,30 +12,36 @@ namespace NumericalAnalysis2
 
 		public bool Transpose { get; private set; }
 		public int N { get; private set; }
-		private double[] x;
+		public double[] X { get; private set; }
 		public double this[int i]
 		{
-			get => x[i];
-			set =>x[i] = value;
+			get => X[i];
+			set => X[i] = value;
 		}
 
 		private Vector(bool t = false)
 		{
 			Transpose = t;
-			x = null;
+			X = null;
 			N = 0;
 		}
 		public Vector(int n, bool t = false)
 		{
 			Transpose = t;
-			x = new double[n];
-			N = x.Length;
+			X = new double[n];
+			N = X.Length;
+		}
+		public Vector(int n, double k, bool t = false)
+		{
+			Transpose = t;
+			X = Enumerable.Repeat(k, n).ToArray();
+			N = X.Length;
 		}
 		public Vector(params double[] a)
 		{
 			Transpose = false;
-			x = a.Clone() as double[];
-			N = x.Length;
+			X = a.Clone() as double[];
+			N = X.Length;
 		}
 
 		public IMatrix DeepAClone()
@@ -47,7 +53,7 @@ namespace NumericalAnalysis2
 			get => new Vector()
 			{
 				Transpose = Transpose,
-				x = x.Clone() as double[],
+				X = X.Clone() as double[],
 				N = N
 			};
 		}
@@ -58,7 +64,7 @@ namespace NumericalAnalysis2
 				return new Vector()
 				{
 					Transpose = !Transpose,
-					x = x.Clone() as double[],
+					X = X.Clone() as double[],
 					N = N
 				};
 			}
@@ -89,7 +95,7 @@ namespace NumericalAnalysis2
 
 			return new Vector(u.Transpose)
 			{
-				x = u.x.Zip(v.x, (x, y) => x + y).ToArray(),
+				X = u.X.Zip(v.X, (x, y) => x + y).ToArray(),
 				N = u.N
 			};
 		}
@@ -99,7 +105,7 @@ namespace NumericalAnalysis2
 
 			return new Vector(u.Transpose)
 			{
-				x = u.x.Zip(v.x, (x, y) => x - y).ToArray(),
+				X = u.X.Zip(v.X, (x, y) => x - y).ToArray(),
 				N = u.N
 			};
 		}
@@ -107,7 +113,7 @@ namespace NumericalAnalysis2
 		{
 			return new Vector(u.Transpose)
 			{
-				x = u.x.Select(x => d * x).ToArray(),
+				X = u.X.Select(x => d * x).ToArray(),
 				N = u.N
 			};
 		}
@@ -119,7 +125,7 @@ namespace NumericalAnalysis2
 		{
 			return new Vector(u.Transpose)
 			{
-				x = u.x.Select(x => x / d).ToArray(),
+				X = u.X.Select(x => x / d).ToArray(),
 				N = u.N
 			};
 		}
@@ -127,7 +133,7 @@ namespace NumericalAnalysis2
 		{
 			DoDimensionsMatch(u, v);
 
-			return u.x.Zip(v.x, (x, y) => x * y).Sum();
+			return u.X.Zip(v.X, (x, y) => x * y).Sum();
 		}
 
 		public bool ApproximatelyEquals(Vector u)
@@ -147,41 +153,41 @@ namespace NumericalAnalysis2
 
 		public void SwapRows(int i, int j)
 		{
-			x.SwapInArray(i, j);
+			X.SwapInArray(i, j);
 		}
 		public void SubtractRow(int i, double d, int k)
 		{
-			x[i] -= d * x[k];
+			X[i] -= d * X[k];
 		}
 		public void DivideRow(int i, double d)
 		{
-			x[i] /= d;
+			X[i] /= d;
 		}
 
 		/// <summary>
 		/// Максимум модулей элементов есть кубическая норма вектора
 		/// </summary>
-		public double N1 => x.Max(x => Abs(x));
+		public double N1 => X.Max(x => Abs(x));
 		/// <summary>
 		/// Евклидова норма
 		/// </summary>
-		public double N2 => Sqrt(x.Sum(x => x * x));
+		public double N2 => Sqrt(X.Sum(x => x * x));
 		/// <summary>
 		/// Сумма модулей всех элементов есть октаэдрическая норма вектора
 		/// </summary>
-		public double N8 => x.Sum(x => Abs(x));
+		public double N8 => X.Sum(x => Abs(x));
 
 		public string ToString(int i, int f)
 		{
-			return x[i].ToString(f);
+			return X[i].ToString(f);
 		}
 		public string ToString(int f)
 		{
-			return Join("  ", x.Select(x => x.ToString(f)));
+			return Join("  ", X.Select(x => x.ToString(f)));
 		}
 		public override string ToString()
 		{
-			return Join(", ", x);
+			return Join(", ", X);
 		}
 	}
 }

@@ -13,7 +13,7 @@ namespace NumericalAnalysis2
 
 			f = (twoColumn) ? -8 : -8;
 
-			shortIndentL = 2;
+			alwaysIndentL = 2;
 			indentL = 5;
 
 			columnSize = (twoColumn) ? 58

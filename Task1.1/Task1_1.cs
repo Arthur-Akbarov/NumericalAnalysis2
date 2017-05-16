@@ -20,7 +20,7 @@ namespace NumericalAnalysis2
 			f = -11;
 
 			indentL = 0;
-			shortIndentL = 2;
+			alwaysIndentL = 2;
 
 			if (twoColumn)
 				indentL = 2;

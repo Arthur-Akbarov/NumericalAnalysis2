@@ -1,11 +1,9 @@
-﻿using static NumericalAnalysis2.Printer;
-using System;
-using System.Text;
+﻿using System.Text;
+using static NumericalAnalysis2.Printer;
 using static NumericalAnalysis2.Worker;
 using static System.Console;
 using static System.Environment;
 using static System.String;
-using static System.Math;
 
 namespace NumericalAnalysis2
 {
@@ -139,12 +137,6 @@ namespace NumericalAnalysis2
 			sb.Clear();
 		}
 
-		void ColorWrite(string s)
-		{
-			ForegroundColor = colorCfg;
-			Write(s);
-			ForegroundColor = colorFg;
-		}
 		void AppendBRow(int i)
 		{
 			if (b != null)

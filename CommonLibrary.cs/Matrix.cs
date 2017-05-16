@@ -206,15 +206,17 @@ namespace NumericalAnalysis2
 			X[i] /= d;
 		}
 
-		public static double Trace(Matrix q)
+		public double Trace
 		{
-			double result = 0;
+			get {
+				double result = 0;
 
-			int n = Min(q.Rows, q.Cols);
-			for (int i = 0; i < n; i++)
-				result += q[i, i];
+				int n = Min(Rows, Cols);
+				for (int i = 0; i < n; i++)
+					result += this[i, i];
 
-			return result;
+				return result;
+			}
 		}
 
 		/// <summary>

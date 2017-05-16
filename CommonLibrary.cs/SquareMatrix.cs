@@ -66,19 +66,6 @@ namespace NumericalAnalysis2
 			};
 		}
 
-		public SquareMatrix Diagonal
-		{
-			get
-			{
-				int n = Rows;
-				var result = new SquareMatrix(n, true);
-
-				for (int i = 0; i < n; i++)
-					result[i, i] = this[i, i];
-
-				return result;
-			}
-		}
 		public SquareMatrix DiagonalInvert
 		{
 			get
@@ -169,6 +156,20 @@ namespace NumericalAnalysis2
 			return true;
 		}
 
+		public SquareMatrix T
+		{
+			get
+			{
+				var result = new SquareMatrix(Cols, true);
+
+				for (int i = 0; i < result.Rows; i++)
+					for (int j = 0; j < result.Cols; j++)
+						result[i, j] = this[j, i];
+
+				return result;
+			}
+		}
+
 		public SquareMatrix Invert
 		{
 			get
@@ -246,6 +247,17 @@ namespace NumericalAnalysis2
 			{
 				X = q.X.Select(x => x / d).ToArray()
 			};
+		}
+		public static SquareMatrix operator *(double d, SquareMatrix q)
+		{
+			return new SquareMatrix(q.Rows, false)
+			{
+				X = q.X.Select(x => d * x).ToArray()
+			};
+		}
+		public static SquareMatrix operator *(SquareMatrix q, double d)
+		{
+			return d * q;
 		}
 		public static SquareMatrix operator *(SquareMatrix q, SquareMatrix t)
 		{

@@ -1,71 +1,43 @@
-﻿using System.Linq;
-using static NumericalAnalysis2.Printer;
+﻿using static NumericalAnalysis2.Printer;
 using static NumericalAnalysis2.SquareMatrix;
+using static System.Console;
 using static System.Math;
 
 namespace NumericalAnalysis2
 {
-	static class Worker
+	class Iteration
 	{
-		public static bool DiagonallyDominant(this SquareMatrix q)
-		{
-			return q.X.Select((x, i) => 2 * x[i] - x.N8).All(x => x > 0);
-		}
-		public static SquareMatrix AboveDiagonal(this SquareMatrix q)
-		{
-			var result = q.DeepClone;
-			int n = q.Rows;
+		public static Vector xGauss;
 
-			for (int i = 0; i < n; i++)
-				for (int j = 0; j < i; j++)
-					result[i, j] = 0;
-
-			return result;
-		}
-		public static SquareMatrix UnderDiagonal(this SquareMatrix q)
-		{
-			var result = q.DeepClone;
-			int n = q.Rows;
-
-			for (int i = 0; i < n; i++)
-				for (int j = i; j < n; j++)
-					result[i, j] = 0;
-
-			return result;
-		}
-	}
-
-	class Interation
-	{
-		public static Vector x;
-
-		const int module = 1;
+		const int radiusSteps = 10;
+		const int outputModule = 10;
 		const int tooBigStep = 1000;
-		const int length = 56;
+		const int divOneColumnLineLength = 56;
 
 		SquareMatrix H;
-		Vector g;
+		Vector g, x, xPrev;
 		int steps, n;
 		double e, posterioriEstimate, prioriEstimate;
 		double HRN8, HN8, gN8, x0N8;
+		bool output;
 
-		Interation(SquareMatrix q, Vector u)
+		Iteration() { }
+		Iteration(SquareMatrix q, Vector u)
 		{
 			n = q.Rows;
 
-			SquareMatrix D = q.DiagonalInvert;
-			H = Id(n) - D * q;
-			g = D * u;
+			H = q;
+			g = u;
 
 			x = new Vector(n);
 		}
 
-		Interation(SquareMatrix q, Vector u, double e)
+		Iteration(SquareMatrix q, Vector u, double e)
 			: this(q, u)
 		{
 			this.e = e;
 		}
-		Interation(SquareMatrix q, Vector u, int steps)
+		Iteration(SquareMatrix q, Vector u, int steps)
 			: this(q, u)
 		{
 			this.steps = steps;
@@ -73,48 +45,30 @@ namespace NumericalAnalysis2
 
 		public static bool FixedPoint(SquareMatrix q, Vector u, double e)
 		{
-			if (!CheckConvergenceCondition(q))
-				return false;
-
-			new Interation(q, u, e).FixedPointByE();
-			return true;
+			return new Iteration(q, u, e).FixedPointByE();
 		}
 		public static bool FixedPoint(SquareMatrix q, Vector u, int steps)
 		{
-			if (!CheckConvergenceCondition(q))
-				return false;
-
-			new Interation(q, u, steps).FixedPointBySteps();
-			return true;
+			return new Iteration(q, u, steps).FixedPointBySteps();
 		}
 		public static bool Seidel(SquareMatrix q, Vector u, int steps)
 		{
-			if (!CheckConvergenceCondition(q))
-				return false;
-
-			new Interation(q, u, steps).SeidelBySteps();
-			return true;
+			return new Iteration(q, u, steps).SeidelBySteps();
 		}
 		public static bool Seidel(SquareMatrix q, Vector u, double e)
 		{
-			if (!CheckConvergenceCondition(q))
-				return false;
-
-			new Interation(q, u, e).SeidelByE();
-			return true;
+			return new Iteration(q, u, e).SeidelByE();
 		}
-		static bool CheckConvergenceCondition(SquareMatrix q)
+		public static void SuccessiveOverRelaxation(SquareMatrix q, Vector u,
+			int steps)
 		{
-			if (q.DiagonallyDominant())
-				return true;
-
-			Line("Матрица не диагонально доминирующая");
-			return false;
+			new Iteration(q, u, steps).SuccessiveOverRelaxationBySteps();
 		}
 
 		bool FixedPointBySteps()
 		{
-			Start("Проделаем метод простой итерации с заданным кол-ом шагов");
+			Start("Проделаем ", "метод простой итерации",
+				" с заданным кол-ом шагов");
 			Right(steps);
 			Line();
 
@@ -124,20 +78,21 @@ namespace NumericalAnalysis2
 
 			for (int i = 0; i < steps; i++)
 			{
-				var xPrev = x;
+				xPrev = x;
 				x = H * x + g;
 
 				posterioriEstimate = HN8 / (1 - HN8) * (x - xPrev).N8;
 
-				OutputPosterioriEstimate(i);
+				OutputPosterioriEstimate(i + 1);
 			}
 
 			return HappyEnd();
 		}
 		bool FixedPointByE()
 		{
-			Start("Проделаем метод простой итерации с заданной погрешностью");
-			Right(e);
+			Start("Проделаем ", "метод простой итерации",
+				" с заданной погрешностью");
+			RightE(e, n);
 			Line();
 
 			FixedPointInit();
@@ -147,7 +102,7 @@ namespace NumericalAnalysis2
 
 			for (steps = 1; steps < tooBigStep; steps++)
 			{
-				var xPrev = x;
+				xPrev = x;
 				x = H * x + g;
 
 				posterioriEstimate = HN8 / (1 - HN8) * (x - xPrev).N8;
@@ -167,7 +122,7 @@ namespace NumericalAnalysis2
 
 		bool SeidelBySteps()
 		{
-			Start("Проделаем метод Зейделя с заданным кол-ом шагов");
+			Start("Проделаем ", "метод Зейделя", " с заданным кол-ом шагов");
 			Right(steps);
 			Line();
 
@@ -176,20 +131,20 @@ namespace NumericalAnalysis2
 
 			for (int i = 0; i < steps; i++)
 			{
-				var xPrev = x;
+				xPrev = x;
 				x = H * x + g;
 
 				posterioriEstimate = HRN8 / (1 - HN8) * (x - xPrev).N8;
 
-				OutputPosterioriEstimate(i);
+				OutputPosterioriEstimate(i + 1);
 			}
 
 			return HappyEnd();
 		}
 		bool SeidelByE()
 		{
-			Start("Проделаем метод Зейделя с заданной погрешностью");
-			Right(e);
+			Start("Проделаем ", "метод Зейделя", " с заданной погрешностью");
+			RightE(e, n);
 			Line();
 
 			SeidelInit();
@@ -199,7 +154,7 @@ namespace NumericalAnalysis2
 
 			for (steps = 1; steps < tooBigStep; steps++)
 			{
-				var xPrev = x;
+				xPrev = x;
 				x = H * x + g;
 
 				posterioriEstimate = HRN8 / (1 - HN8) * (x - xPrev).N8;
@@ -213,7 +168,7 @@ namespace NumericalAnalysis2
 		void SeidelInit()
 		{
 			var HL = H.UnderDiagonal();
-			var HR = H.AboveDiagonal();
+			var HR = H.AboveDiagonal() + H.Diagonal();
 
 			var h = (Id(n) - HL).Invert;
 
@@ -227,13 +182,42 @@ namespace NumericalAnalysis2
 			HRN8 = HR.N8;
 		}
 
+		void SuccessiveOverRelaxationBySteps()
+		{
+			Start("Проделаем ", "метод верхней релаксации", " с кол-ом шагов");
+			Right(steps);
+			Line();
+
+			double q = FindQ();
+
+			for (int k = 0; k < steps; k++)
+				for (int i = 0; i < n; i++)
+					x[i] += (H[i] * x - (H[i, i] + 1) * x[i] + g[i]) * q;
+
+			End();
+		}
+		void SuccessiveOverRelaxationByStepsUsingA()
+		{
+			Start("Проделаем ", "метод верхней релаксации", " с кол-ом шагов");
+			Right(steps);
+			Line();
+
+			double q = FindQ();
+
+			for (int k = 0; k < steps; k++)
+				for (int i = 0; i < n; i++)
+					x[i] += q / H[i, i] * (g[i] - H[i] * x);
+
+			End();
+		}
+
 		void FindPrioriEstimateBySteps()
 		{
 			prioriEstimate = Pow(HN8, steps) * x0N8 +
 				Pow(HN8, steps) / (1 - HN8) * gN8;
 
 			Left("Априорная оценка погрешности решения на {0}-м шаге", steps);
-			Right(prioriEstimate);
+			RightE(prioriEstimate, n);
 		}
 		bool FindPrioriEstimationByE()
 		{
@@ -247,7 +231,7 @@ namespace NumericalAnalysis2
 
 				Line("Априорная оценка погрешности решения впервые");
 				Left("удовлетворяет желаемой точности на шаге {0}", steps);
-				Right(" {0:E2} < {0:E2}", prioriEstimate,  e);
+				RightE(prioriEstimate, n);
 
 				return true;
 			}
@@ -259,19 +243,73 @@ namespace NumericalAnalysis2
 		}
 		void OutputPosterioriEstimate(int i)
 		{
-			if (i % module == 0)
+			if (i % outputModule == 0)
 			{
+				if (!output && (output = true))
+					Line();
+
 				AlwaysLeft("Апостериорная оценка погрешности решения" +
 					" на {0}-м шаге", i);
 
-				AlwaysRight(posterioriEstimate);
+				AlwaysRightE(posterioriEstimate, n);
 			}
 		}
-
-		void Start(string s)
+		double GetSpectralRadius()
 		{
-			StartLine(length);
-			Left(s);
+			var xPrev = new Vector(n);
+
+			for (int i = 0; i < radiusSteps - 1; i++)
+				xPrev = H * xPrev + g;
+
+			var x = H * xPrev + g;
+			var xNext = H * x + g;
+
+			double result = (xNext - x).N8 / (x - xPrev).N8;
+
+			// нашли приближённый модуль с.ч., далее уточним его знак
+			var D = result * Id(n);
+
+			return (Abs((H - D).Det) < Abs((H + D).Det)) ? result : -result;
+		}
+		Vector ClarificationOfLyusternik()
+		{
+			double pH = GetSpectralRadius();
+
+			return xPrev + 1 / (1 - pH) * (x - xPrev);
+		}
+		double FindQ()
+		{
+			double spectralRadius = GetSpectralRadius();
+
+			double result = 2 / (1 + Sqrt(1 - Pow(spectralRadius, 2)));
+
+			Left("Подобрали q методом простой итерации за {0} шага", steps);
+			Right(result);
+
+			return result;
+		}
+
+		void Start(string s1, string s2, string s3)
+		{
+			Line();
+			StartLine(divOneColumnLineLength);
+
+			Write(s1);
+			ColorWrite(s2);
+			Left(s3);
+		}
+		void End()
+		{
+			Line();
+
+			Left("На шаге {0} получили решение", steps);
+			Right(x);
+			Line();
+
+			Left("Фактическая погрешность");
+			RightE((xGauss - x).N8, n);
+
+			EndLine(divOneColumnLineLength);
 		}
 		bool HappyEnd()
 		{
@@ -279,11 +317,23 @@ namespace NumericalAnalysis2
 
 			Left("На шаге {0} получили решение", steps);
 			Right(x);
+			Line();
 
-			Left("c апостериорной оценкой погрешности в");
-			Right(posterioriEstimate);
+			Left("Апостериорная оценка погрешности");
+			RightE(posterioriEstimate, n);
 
-			EndLine(length);
+			Left("Фактическая погрешность");
+			RightE((xGauss - x).N8, n);
+
+			Line();
+			var xLyusternik = ClarificationOfLyusternik();
+			Left("Уточнение по Люстернику");
+			Right(xLyusternik);
+
+			Left("Фактическая погрешность");
+			RightE((xGauss - xLyusternik).N8, n);
+
+			EndLine(divOneColumnLineLength);
 
 			return true;
 		}
@@ -294,7 +344,7 @@ namespace NumericalAnalysis2
 			Line("Вплоть до {0} шага не получили желаемую", tooBigStep);
 			Line("апостериорную оценку погрешности");
 
-			EndLine(length);
+			EndLine(divOneColumnLineLength);
 
 			return false;
 		}

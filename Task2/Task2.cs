@@ -1,5 +1,7 @@
 ﻿using System.Text;
 using static NumericalAnalysis2.Printer;
+using static NumericalAnalysis2.Iteration;
+using static NumericalAnalysis2.SquareMatrix;
 using static System.Console;
 
 namespace NumericalAnalysis2
@@ -14,7 +16,8 @@ namespace NumericalAnalysis2
 			twoColumn = true;
 			f = -10;
 
-			indentL = shortIndentL = 2;
+			indentL = (twoColumn) ? 2 : 0;
+
 			columnSize = (twoColumn) ? 57 : 55;
 		}
 
@@ -33,22 +36,41 @@ namespace NumericalAnalysis2
 			Left("Рассмотрим исходную систему AX = B");
 			Right(A, B);
 
+			if (!CheckConvergenceCondition(A))
+				return;
+
+			xGauss = GaussMod.Do(A, B);
 			Left("Решение модифицированным методом Гаусса");
-			Right(GaussMod.Do(A, B).ToString(f));
-
+			Right(xGauss.ToString(f));
 			Line();
-			Interation.FixedPoint(A, B, e);
 
-			Line();
-			Interation.FixedPoint(A, B, steps);
+			var D = A.DiagonalInvert;
+			var H = Id(A.Rows) - D * A;
+			var g = D * B;
+			Left("Приведём систему к виду X = HX + G");
+			Right(H, g);
 
-			Line();
-			Interation.Seidel(A, B, steps);
+			FixedPoint(H, g, steps);
+			FixedPoint(H, g, e);
 
-			Line();
-			Interation.Seidel(A, B, e);
+			Seidel(H, g, steps);
+			Seidel(H, g, e);
+
+			SuccessiveOverRelaxation(H, g, steps);
 
 			ReadKey();
+		}
+
+		static bool CheckConvergenceCondition(SquareMatrix q)
+		{
+			if (q.DiagonallyDominant())
+				return true;
+
+			WriteLine("Матрица не диагонально доминирующая");
+			WriteLine("Итерационные методы решения не применимы");
+
+			ReadKey();
+			return false;
 		}
 	}
 }

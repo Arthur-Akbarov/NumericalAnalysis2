@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Text;
-using static NumericalAnalysis2.Worker;
 using static System.Console;
-using static System.Environment;
 using static System.Math;
 using static System.String;
 
@@ -23,13 +20,13 @@ namespace NumericalAnalysis2
 		/// <summary>
 		/// отступ перед числами без twoColumn 
 		/// </summary>
-		public static int shortIndentL;
+		public static int alwaysIndentL;
 		/// <summary>
 		/// (макс длина предложения c twoColumn) + 1
 		/// </summary>
 		public static int columnSize;
 		public static string Indent => new string(' ', indentL);
-		public static string ShortIndent => new string(' ', shortIndentL);
+		public static string AlwaysIndent => new string(' ', alwaysIndentL);
 
 		public static void Line(string format = "", params object[] arg)
 		{
@@ -75,6 +72,15 @@ namespace NumericalAnalysis2
 		{
 			WriteLine(Indent + d.ToString(-Abs(f)));
 		}
+		public static void RightE(double d, int n = 0)
+		{
+			Write(Indent);
+
+			if (twoColumn)
+				Write(new string(' ', n * (Abs(f) + 2)));
+
+			WriteLine(" {0:E2}", d);
+		}
 		public static void Right(string format = "", params object[] arg)
 		{
 			WriteLine(Indent + Format(format, arg));
@@ -84,7 +90,7 @@ namespace NumericalAnalysis2
 			if (twoColumn)
 				Write(Indent);
 			else
-				Write(ShortIndent);
+				Write(AlwaysIndent);
 
 			WriteLine(u.ToString(f));
 		}
@@ -93,9 +99,18 @@ namespace NumericalAnalysis2
 			if (twoColumn)
 				Write(Indent);
 			else
-				Write(ShortIndent);
+				Write(AlwaysIndent);
 
 			WriteLine(d.ToString(-Abs(f)));
+		}
+		public static void AlwaysRightE(double d, int n = 0)
+		{
+			if (twoColumn)
+				Write(Indent + new string(' ', n * (Abs(f) + 2)));
+			else
+				Write(AlwaysIndent);
+
+			WriteLine(" {0:E2}", d);
 		}
 		public static void AlwaysRight(string format = "", params object[] arg)
 		{
@@ -115,5 +130,11 @@ namespace NumericalAnalysis2
 			WriteLine(new string(c, (twoColumn) ? columnSize + 1 : length));
 		}
 
+		public static void ColorWrite(string s)
+		{
+			ForegroundColor = colorCfg;
+			Write(s);
+			ForegroundColor = colorFg;
+		}
 	}
 }
