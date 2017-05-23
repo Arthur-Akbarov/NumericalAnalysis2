@@ -8,10 +8,21 @@ namespace NumericalAnalysis2
 {
 	public class Matrix : IMatrix
 	{
-		public int Rows { get; protected set; }
-		public int Cols { get; protected set; }
+		public const double eps = 1e-11;
 
-		public Vector[] X { get; protected set; }
+		public int Rows
+		{
+			get; protected set;
+		}
+		public int Cols
+		{
+			get; protected set;
+		}
+
+		public Vector[] X
+		{
+			get; protected set;
+		}
 		public Vector this[int i]
 		{
 			get => X[i];
@@ -23,8 +34,10 @@ namespace NumericalAnalysis2
 			set => X[i][j] = value;
 		}
 
-		protected Matrix() { }
-		public Matrix(int rows, int cols, bool init)
+		protected Matrix()
+		{
+		}
+		public Matrix(int rows, int cols, bool init = true)
 		{
 			Rows = rows;
 			Cols = cols;
@@ -37,16 +50,16 @@ namespace NumericalAnalysis2
 				X[i] = new Vector(Cols, true);
 		}
 		public Matrix(double[,] a)
-			: this(a.GetLength(0), a.GetLength(1), true)
+			: this(a.GetLength(0), a.GetLength(1))
 		{
 			for (int i = 0; i < Rows; i++)
 				for (int j = 0; j < Cols; j++)
 					this[i, j] = a[i, j];
 		}
 
-		public virtual IMatrix DeepAClone()
+		public virtual IMatrix DeepAClone
 		{
-			return DeepClone;
+			get => DeepClone;
 		}
 		public Matrix DeepClone
 		{
@@ -55,11 +68,11 @@ namespace NumericalAnalysis2
 				X = X.Select(x => x.DeepClone).ToArray()
 			};
 		}
-		public Matrix T
+		public virtual Matrix T
 		{
 			get
 			{
-				var result = new Matrix(Cols, Rows, true);
+				var result = new Matrix(Cols, Rows);
 
 				for (int i = 0; i < result.Rows; i++)
 					for (int j = 0; j < result.Cols; j++)
@@ -138,7 +151,7 @@ namespace NumericalAnalysis2
 		{
 			DoDimensionsMatch(q, t);
 
-			var result = new Matrix(q.Rows, t.Cols, true);
+			var result = new Matrix(q.Rows, t.Cols);
 
 			for (int i = 0; i < result.Rows; i++)
 				for (int j = 0; j < result.Cols; j++)
@@ -171,12 +184,6 @@ namespace NumericalAnalysis2
 
 			return result;
 		}
-		public static IMatrix operator *(Matrix q, IMatrix t)
-		{
-			return (t is Vector)
-				? q * (Vector)t as IMatrix
-				: q * (Matrix)t as IMatrix;
-		}
 
 		public bool ApproximatelyEquals(Matrix q)
 		{
@@ -208,7 +215,8 @@ namespace NumericalAnalysis2
 
 		public double Trace
 		{
-			get {
+			get
+			{
 				double result = 0;
 
 				int n = Min(Rows, Cols);
@@ -220,7 +228,8 @@ namespace NumericalAnalysis2
 		}
 
 		/// <summary>
-		/// Максимум сумм модулей элементов столбца есть кубическая норма матрицы
+		/// Максимум сумм модулей элементов столбца -
+		/// кубическая норма матрицы
 		/// </summary>
 		public double N1
 		{
@@ -239,19 +248,13 @@ namespace NumericalAnalysis2
 				return result;
 			}
 		}
-		public double N2
-		{
-			get
-			{
-				return 1;
-			}
-		}
 		/// <summary>
-		/// Максимум сумм модулей элементов строки есть кубическая норма матрицы
+		/// Максимум сумм модулей элементов строки -
+		/// октаэдрическая норма матрицы
 		/// </summary>
 		public double N8
 		{
-			get { return X.Max(x => x.N8); }
+			get => X.Max(x => x.N8);
 		}
 
 		public string ToString(int i, int f)

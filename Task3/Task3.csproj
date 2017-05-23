@@ -8,9 +8,10 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>NumericalAnalysis2</RootNamespace>
     <AssemblyName>Task3</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,6 +36,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Eigenvalue.cs" />
     <Compile Include="Task3.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -42,9 +44,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommonLibrary.cs\CommonLibrary.cs.csproj">
+    <ProjectReference Include="..\CommonLibrary.cs\CommonLibrary.csproj">
       <Project>{d386cfc5-8b7d-4d7a-9b49-c7e41b2c584d}</Project>
-      <Name>CommonLibrary.cs</Name>
+      <Name>CommonLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

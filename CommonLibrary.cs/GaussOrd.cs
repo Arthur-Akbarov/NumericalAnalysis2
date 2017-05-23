@@ -1,22 +1,13 @@
-﻿using System;
-using System.Text;
-using static System.Console;
-using static System.Environment;
-using static System.Math;
-using static System.String;
-using static NumericalAnalysis2.Printer;
-using static NumericalAnalysis2.Worker;
-
-namespace NumericalAnalysis2
+﻿namespace NumericalAnalysis2
 {
 	public class GaussOrd : Gauss
 	{
-		public static T Do<T>(SquareMatrix q, T t, bool write = false)
+		public static T Do<T>(SquareMatrix q, T t, bool write)
 			where T : class, IMatrix
 		{
 			return new GaussOrd().Start(q, t, write);
 		}
-		public static SquareMatrix Invert(SquareMatrix q, bool write = false)
+		public static SquareMatrix Invert(SquareMatrix q, bool write)
 		{
 			return new GaussOrd() { invert = true }.
 				Start(q, SquareMatrix.Id(q.Rows), write);
@@ -30,22 +21,9 @@ namespace NumericalAnalysis2
 			return a.IsSuccessfully();
 		}
 
-		protected override void Init(SquareMatrix q, IMatrix t, bool write)
-		{
-			if (t.Rows != q.Rows)
-				throw new RankException("Row counts do not match.");
-
-			n = q.Rows;
-			a = q.DeepClone;
-			b = t.DeepAClone();
-
-			int length = Max(51, (n + t.Cols) * (Abs(f) + 2) + 1 + indentL);
-			print = (write) ? new GaussPrint(a, b, n, length) : null;
-		}
-
 		protected override bool GaussianElimination()
 		{
-			print?.Start("I Проделаем прямой ход обычного метода Гаусса");
+			print?.Start("I Проделаем прямой ход ", "обычного метода Гаусса");
 
 			for (int k = 0; k < n; k++)
 			{
@@ -123,5 +101,3 @@ namespace NumericalAnalysis2
 		}
 	}
 }
-
-

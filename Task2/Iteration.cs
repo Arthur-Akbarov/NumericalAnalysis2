@@ -7,12 +7,14 @@ namespace NumericalAnalysis2
 {
 	class Iteration
 	{
+		public static SquareMatrix A;
+		public static Vector B;
 		public static Vector xGauss;
 
 		const int radiusSteps = 10;
 		const int outputModule = 10;
 		const int tooBigStep = 1000;
-		const int divOneColumnLineLength = 56;
+		const int oneColumnLength = 56;
 
 		SquareMatrix H;
 		Vector g, x, xPrev;
@@ -92,7 +94,7 @@ namespace NumericalAnalysis2
 		{
 			Start("Проделаем ", "метод простой итерации",
 				" с заданной погрешностью");
-			RightE(e, n);
+			RightE(e);
 			Line();
 
 			FixedPointInit();
@@ -144,7 +146,7 @@ namespace NumericalAnalysis2
 		bool SeidelByE()
 		{
 			Start("Проделаем ", "метод Зейделя", " с заданной погрешностью");
-			RightE(e, n);
+			RightE(e);
 			Line();
 
 			SeidelInit();
@@ -217,7 +219,7 @@ namespace NumericalAnalysis2
 				Pow(HN8, steps) / (1 - HN8) * gN8;
 
 			Left("Априорная оценка погрешности решения на {0}-м шаге", steps);
-			RightE(prioriEstimate, n);
+			RightE(prioriEstimate);
 		}
 		bool FindPrioriEstimationByE()
 		{
@@ -231,7 +233,7 @@ namespace NumericalAnalysis2
 
 				Line("Априорная оценка погрешности решения впервые");
 				Left("удовлетворяет желаемой точности на шаге {0}", steps);
-				RightE(prioriEstimate, n);
+				RightE(prioriEstimate);
 
 				return true;
 			}
@@ -291,11 +293,10 @@ namespace NumericalAnalysis2
 
 		void Start(string s1, string s2, string s3)
 		{
-			Line();
-			StartLine(divOneColumnLineLength);
+			StartLine(oneColumnLength);
 
 			Write(s1);
-			ColorWrite(s2);
+			WriteColor(s2);
 			Left(s3);
 		}
 		void End()
@@ -304,12 +305,12 @@ namespace NumericalAnalysis2
 
 			Left("На шаге {0} получили решение", steps);
 			Right(x);
-			Line();
+			OutputResidual(A * x - B);
 
 			Left("Фактическая погрешность");
-			RightE((xGauss - x).N8, n);
+			RightE((xGauss - x).N8);
 
-			EndLine(divOneColumnLineLength);
+			EndLine(oneColumnLength);
 		}
 		bool HappyEnd()
 		{
@@ -317,23 +318,25 @@ namespace NumericalAnalysis2
 
 			Left("На шаге {0} получили решение", steps);
 			Right(x);
-			Line();
+			OutputResidual(A * x - B);
 
 			Left("Апостериорная оценка погрешности");
-			RightE(posterioriEstimate, n);
+			RightE(posterioriEstimate);
 
 			Left("Фактическая погрешность");
-			RightE((xGauss - x).N8, n);
-
+			RightE((xGauss - x).N8);
 			Line();
+
 			var xLyusternik = ClarificationOfLyusternik();
 			Left("Уточнение по Люстернику");
 			Right(xLyusternik);
+			OutputResidual(A * xGauss - B);
 
 			Left("Фактическая погрешность");
-			RightE((xGauss - xLyusternik).N8, n);
+			RightE((xGauss - xLyusternik).N8);
 
-			EndLine(divOneColumnLineLength);
+			EndLine(oneColumnLength);
+			Line();
 
 			return true;
 		}
@@ -344,7 +347,7 @@ namespace NumericalAnalysis2
 			Line("Вплоть до {0} шага не получили желаемую", tooBigStep);
 			Line("апостериорную оценку погрешности");
 
-			EndLine(divOneColumnLineLength);
+			EndLine(oneColumnLength);
 
 			return false;
 		}

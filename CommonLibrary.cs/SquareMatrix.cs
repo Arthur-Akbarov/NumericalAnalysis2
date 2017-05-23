@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using static System.Math;
 using static NumericalAnalysis2.Printer;
+using static System.Math;
 
 namespace NumericalAnalysis2
 {
@@ -9,7 +9,7 @@ namespace NumericalAnalysis2
 	{
 		static GaussPrint print;
 
-		public SquareMatrix(int n, bool init)
+		public SquareMatrix(int n, bool init = true)
 			: base(n, n, init) { }
 		public SquareMatrix(params double[] a)
 		{
@@ -34,7 +34,7 @@ namespace NumericalAnalysis2
 
 		public static SquareMatrix Id(int n)
 		{
-			var result = new SquareMatrix(n, true);
+			var result = new SquareMatrix(n);
 
 			for (int i = 0; i < n; i++)
 				result[i, i] = 1;
@@ -54,9 +54,9 @@ namespace NumericalAnalysis2
 			return result;
 		}
 
-		public override IMatrix DeepAClone()
+		public override IMatrix DeepAClone
 		{
-			return DeepClone;
+			get => DeepClone;
 		}
 		public new SquareMatrix DeepClone
 		{
@@ -64,25 +64,6 @@ namespace NumericalAnalysis2
 			{
 				X = X.Select(x => x.DeepClone).ToArray()
 			};
-		}
-
-		public SquareMatrix DiagonalInvert
-		{
-			get
-			{
-				int n = Rows;
-				var result = new SquareMatrix(n, true);
-
-				for (int i = 0; i < n; i++)
-				{
-					double d = this[i, i];
-
-					if (d != 0)
-						result[i, i] = 1 / d;
-				}
-
-				return result;
-			}
 		}
 
 		public static double Determinant(SquareMatrix q, bool write = false)
@@ -117,8 +98,8 @@ namespace NumericalAnalysis2
 				result *= a[k, k];
 			}
 
-			print?.Put("Перемножим диагональные элементы и получим ответ");
-			print?.End("|A| = {0}", result);
+			print?.Put("Перемножим диагональные элементы");
+			print?.End("Получили определитель матрицы A, |A|", result);
 
 			return result;
 		}
@@ -156,11 +137,11 @@ namespace NumericalAnalysis2
 			return true;
 		}
 
-		public SquareMatrix T
+		public new SquareMatrix T
 		{
 			get
 			{
-				var result = new SquareMatrix(Cols, true);
+				var result = new SquareMatrix(Cols);
 
 				for (int i = 0; i < result.Rows; i++)
 					for (int j = 0; j < result.Cols; j++)
@@ -175,7 +156,7 @@ namespace NumericalAnalysis2
 			get
 			{
 				int n = Rows;
-				var t = new SquareMatrix(n, true);
+				var t = new SquareMatrix(n);
 
 				for (int i = 0; i < n; i++)
 					for (int j = 0; j < n; j++)
@@ -183,13 +164,13 @@ namespace NumericalAnalysis2
 							? GetMinor(i, j)
 							: -GetMinor(i, j);
 
-				return CastToSquare(t / Det);
+				return t / Det;
 			}
 		}
 		double GetMinor(int x, int y)
 		{
 			int n = Rows;
-			var m = new SquareMatrix(n - 1, true);
+			var m = new SquareMatrix(n - 1);
 
 			for (int i = 0; i < x; i++)
 			{
@@ -263,7 +244,7 @@ namespace NumericalAnalysis2
 		{
 			DoDimensionsMatch(q, t);
 
-			var result = new SquareMatrix(q.Rows, true);
+			var result = new SquareMatrix(q.Rows);
 
 			for (int i = 0; i < result.Rows; i++)
 				for (int j = 0; j < result.Cols; j++)
@@ -291,20 +272,10 @@ namespace NumericalAnalysis2
 		/// <summary>
 		/// Кубическое число обусловленности квадратной матрицы
 		/// </summary>
-		public double Cond1
-		{
-			get => N1 * Invert.N1;
-		}
-		public double Cond2
-		{
-			get => N2 * Invert.N2;
-		}
+		public double Cond1 => N1 * Invert.N1;
 		/// <summary>
 		/// Октаэдрическое число обусловленности квадратной матрицы
 		/// </summary>
-		public double Cond8
-		{
-			get => N8 * Invert.N8;
-		}
+		public double Cond8 => N8 * Invert.N8;
 	}
 }

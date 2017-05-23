@@ -1,9 +1,6 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using static System.Math;
 using static System.String;
-using static System.Console;
-using System.Text;
 
 namespace NumericalAnalysis2
 {
@@ -11,20 +8,39 @@ namespace NumericalAnalysis2
 	{
 		public const double eps = 1e-11;
 
+		public static string ToString(this double obj, int ff, int f)
+		{
+			return Format("{0," + ff + "}", obj.ToString(f));
+		}
+		public static string ToString(this object obj, int ff, int f)
+		{
+			if (obj is double)
+				obj = ToString((double)obj, f);
+
+			return Format("{0," + ff + "}", obj);
+		}
 		public static string ToString(this double d, int maxLength)
 		{
-			char c = (d < 0) ? '-' : ' ';
+			char sign = (d < 0) ? '-' : ' ';
 			d = Abs(d);
 
-			var nfi = new NumberFormatInfo { NumberGroupSeparator = " " };
-			string s = d.ToString("N0", nfi);
+			var nfi = new NumberFormatInfo
+			{
+				NumberGroupSeparator = " "
+			};
 
-			int frac = Abs(maxLength) - 2 - s.Length;
+			string module = d.ToString("N0", nfi);
+
+			int frac = Abs(maxLength) - 2 - module.Length;
 
 			if (frac > 0)
-				s = d.ToString("0." + new string('#', frac));
+			{
+				module = d.ToString("N" + frac, nfi);
+				module = module.TrimEnd('0');
+				module = module.TrimEnd('.');
+			}
 
-			return Format("{0," + maxLength + "}", c + s);
+			return Format("{0," + maxLength + "}", sign + module);
 		}
 		public static void Swap<T>(ref T a, ref T b)
 		{

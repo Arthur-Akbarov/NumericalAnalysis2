@@ -2,6 +2,7 @@
 using static NumericalAnalysis2.Printer;
 using static NumericalAnalysis2.Worker;
 using static System.Console;
+using System.Linq;
 using static System.Environment;
 using static System.String;
 
@@ -9,25 +10,31 @@ namespace NumericalAnalysis2
 {
 	public class GaussPrint
 	{
-		readonly SquareMatrix a;
-		readonly IMatrix b;
-		readonly int n, length;
-		StringBuilder sb;
+		readonly SquareMatrix a0, a;
+		readonly IMatrix b0, b;
+		readonly int n, oneColumnLength;
+		readonly StringBuilder sb;
 		int step;
 
 		public GaussPrint(SquareMatrix a, IMatrix b, int n, int length)
 		{
+			a0 = a.DeepClone;
+			b0 = b?.DeepAClone;
 			this.a = a;
 			this.b = b;
 			this.n = n;
-			this.length = length;
+			this.oneColumnLength = length;
 			sb = new StringBuilder();
 		}
 
-		internal void Start(string s)
+		internal void Start(string s1, string s2 = null)
 		{
-			StartLine(length);
-			Line(s);
+			StartLine(oneColumnLength);
+
+			Write(s1);
+			WriteColor(s2);
+			Line();
+
 			Line();
 		}
 		internal void Normalize(string s, int k, int i)
@@ -80,10 +87,11 @@ namespace NumericalAnalysis2
 		}
 		internal void End(string s, double d)
 		{
-			Left(s, d);
+			Left(s);
+			Right(d);
 
-			WriteLine();
-			EndLine(length);
+			Line();
+			EndLine(oneColumnLength);
 		}
 		internal void End(string s)
 		{
@@ -92,7 +100,14 @@ namespace NumericalAnalysis2
 			WhitePut(0, n);
 
 			WriteLine();
-			EndLine(length);
+
+			if (b0?.Cols == 1)
+			{
+				OutputResidual(a0 * (Vector)b  - (Vector)b0);
+				Line();
+			}
+
+			EndLine(oneColumnLength);
 		}
 
 		public void WhitePut(int start, int end)
@@ -108,7 +123,7 @@ namespace NumericalAnalysis2
 		}
 		void ColorPut(int k)
 		{
-			ColorWrite(Format(" [{0}]", k + 1).PadRight(indentL));
+			WriteColor($" [{k + 1}]".PadRight(indentL));
 
 			sb.Append(a.ToString(k, f));
 			AppendBRow(k);
@@ -126,7 +141,7 @@ namespace NumericalAnalysis2
 			Write(sb);
 			sb.Clear();
 
-			ColorWrite(a[k, i].ToString(f));
+			WriteColor(a[k, i].ToString(f));
 
 			for (int j = i + 1; j < n; j++)
 				sb.Append("  " + a[k, j].ToString(f));

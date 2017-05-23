@@ -33,9 +33,7 @@ namespace NumericalAnalysis2
 				if (sm == 0)
 					break;
 
-				double tresh = i < 3
-					? 02 * sm / (n * n)
-					: 0;
+				double tresh = i < 3 ? 02 * sm / (n * n) : 0;
 
 				for (int p = 0; p < n - 1; p++)
 					for (int q = p + 1; q < n; q++)

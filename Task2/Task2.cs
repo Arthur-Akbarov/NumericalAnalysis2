@@ -24,13 +24,10 @@ namespace NumericalAnalysis2
 		static void Main(string[] args)
 		{
 			Init();
-			Title = "Task2, Итерационные методы решения линейных систем";
+			Title = "Task2 Итерационные методы решения линейных систем";
 			OutputEncoding = Encoding.GetEncoding(1251);
 
 			var A = new SquareMatrix(100, 6, 2, 2, 100, 5, 3, 4, 100);
-			//var A = new SquareMatrix(0.082012, 0.059814, -0.03172,
-			//						0.05929, 0.00046623, -0.030383,
-			//						-0.031204, -0.030532, 0.040177);
 			var B = new Vector(60, 70, 80);
 
 			Left("Рассмотрим исходную систему AX = B");
@@ -39,16 +36,32 @@ namespace NumericalAnalysis2
 			if (!CheckConvergenceCondition(A))
 				return;
 
-			xGauss = GaussMod.Do(A, B);
+			xGauss = GaussMod.Do(A, B, false);
 			Left("Решение модифицированным методом Гаусса");
-			Right(xGauss.ToString(f));
+			Right(xGauss);
+			OutputResidual(A * xGauss - B);
 			Line();
 
-			var D = A.DiagonalInvert;
+			var D = A.DiagonalInvert();
 			var H = Id(A.Rows) - D * A;
 			var g = D * B;
+
+			for (int i = 0; i < 3; i++)
+				for (int j = 0; j < 3; j++)
+					if (i != j)
+						H[i, j] = 1 / System.Math.Pow(2, System.Math.Abs(i - j) + 1);
+					else
+						H[i, j] = 0;
+
+			g = new Vector(3);
+			for (int i = 0; i < 3; i++)
+				g[i] = 1;
+
 			Left("Приведём систему к виду X = HX + G");
 			Right(H, g);
+
+			Iteration.A = A;
+			Iteration.B = B;
 
 			FixedPoint(H, g, steps);
 			FixedPoint(H, g, e);

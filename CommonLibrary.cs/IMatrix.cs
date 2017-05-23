@@ -9,7 +9,7 @@
 		void SubtractRow(int i, double d, int k);
 		void DivideRow(int i, double d);
 
-		IMatrix DeepAClone();
+		IMatrix DeepAClone { get; }
 
 		string ToString(int i, int f);
 		string ToString(int f);

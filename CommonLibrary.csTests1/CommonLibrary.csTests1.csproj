@@ -55,9 +55,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommonLibrary.cs\CommonLibrary.cs.csproj">
+    <ProjectReference Include="..\CommonLibrary.cs\CommonLibrary.csproj">
       <Project>{D386CFC5-8B7D-4D7A-9B49-C7E41B2C584D}</Project>
-      <Name>CommonLibrary.cs</Name>
+      <Name>CommonLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FE3FF39C-6944-4D3F-BF7B-0E4A9ECD1E9B}</ProjectGuid>
+    <ProjectGuid>{BB60C36B-53A7-4150-8AFC-2EF0293E1EC9}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>NumericalAnalysis2</RootNamespace>
-    <AssemblyName>Task1.1</AssemblyName>
+    <AssemblyName>Task4</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -36,15 +37,17 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Task1_1.cs" />
+    <Compile Include="Task4.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tridiagonal.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommonLibrary.cs\CommonLibrary.cs.csproj">
+    <ProjectReference Include="..\CommonLibrary.cs\CommonLibrary.csproj">
       <Project>{d386cfc5-8b7d-4d7a-9b49-c7e41b2c584d}</Project>
-      <Name>CommonLibrary.cs</Name>
+      <Name>CommonLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

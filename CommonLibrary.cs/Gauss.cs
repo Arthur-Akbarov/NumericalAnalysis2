@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Text;
-using static System.Console;
-using static System.Environment;
-using static System.Math;
-using static System.String;
 using static NumericalAnalysis2.Printer;
-using static NumericalAnalysis2.Worker;
+using static System.Math;
 
 namespace NumericalAnalysis2
 {
@@ -34,10 +29,10 @@ namespace NumericalAnalysis2
 
 			n = q.Rows;
 			a = q.DeepClone;
-			b = t.DeepAClone();
+			b = t.DeepAClone;
 
 			int length = Max(57, (n + t.Cols) * (Abs(f) + 2) + 1 + indentL);
-			print = (write) ? new GaussPrint(a, b, n, length) : null;
+			print = write ? new GaussPrint(a, b, n, length) : null;
 		}
 		protected bool IsSuccessfully()
 		{
@@ -51,5 +46,6 @@ namespace NumericalAnalysis2
 
 		protected abstract bool GaussianElimination();
 		protected abstract void BackSubstitution();
+
 	}
 }

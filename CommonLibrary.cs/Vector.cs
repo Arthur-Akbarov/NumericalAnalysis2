@@ -7,6 +7,8 @@ namespace NumericalAnalysis2
 {
 	public class Vector : IMatrix
 	{
+		public const double eps = 1e-11;
+
 		public int Rows => (Transpose) ? 1 : N;
 		public int Cols => (Transpose) ? N : 1;
 
@@ -44,9 +46,9 @@ namespace NumericalAnalysis2
 			N = X.Length;
 		}
 
-		public IMatrix DeepAClone()
+		public IMatrix DeepAClone
 		{
-			return DeepClone;
+			get => DeepClone;
 		}
 		public Vector DeepClone
 		{
@@ -59,15 +61,12 @@ namespace NumericalAnalysis2
 		}
 		public Vector T
 		{
-			get
-			{
-				return new Vector()
+			get => new Vector()
 				{
 					Transpose = !Transpose,
 					X = X.Clone() as double[],
 					N = N
 				};
-			}
 		}
 
 		internal static bool AreDimensionsEqual(Vector u, Vector v)
@@ -191,40 +190,3 @@ namespace NumericalAnalysis2
 		}
 	}
 }
-// ShallowCopy
-//public static implicit operator Vector(double[] a)
-//{
-//	return new Vector(a);
-//}
-//public static implicit operator double[] (Vector a)
-//{
-//	return a.x;
-//}
-//public static bool AreDimensionsEqual(Vector u, Vector v)
-//{
-//	if (u.Rows != v.Rows || u.Cols != v.Cols)
-//		throw new RankException("Dimensions are not equal.");
-
-//	return true;
-//}
-//public static bool DoDimensionsMatch(Vector u, Vector v)
-//{
-//	if (u.Cols != v.Rows)
-//		throw new RankException("Dimensions do not match.");
-
-//	return true;
-//}
-//public static bool AreDimensionsEqual(Vector u, Vector v)
-//{
-//	if (!u.transpose || v.transpose || u.N != v.N)
-//		throw new RankException("Dimensions are not equal.");
-
-//	return true;
-//}
-//public static bool DoDimensionsMatch(Vector u, Vector v)
-//{
-//	if (u.transpose != v.transpose || u.N != v.N)
-//		throw new RankException("Dimensions do not match.");
-
-//	return true;
-//}

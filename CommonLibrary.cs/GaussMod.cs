@@ -6,16 +6,21 @@ namespace NumericalAnalysis2
 	{
 		bool needSort;
 		int[] index;
+
 		protected override void Init(SquareMatrix q, IMatrix t, bool write)
 		{
 			base.Init(q, t, write);
+
 			index = new int[n];
 		}
 
-		public static SquareMatrix Invert(SquareMatrix q, bool write = false)
+		public static SquareMatrix Invert(SquareMatrix q, bool write)
 		{
-			return new GaussMod() { invert = true }.
-				Start(q, SquareMatrix.Id(q.Rows), write);
+			return new GaussMod()
+			{
+				invert = true
+			}
+			.Start(q, SquareMatrix.Id(q.Rows), write);
 		}
 		public static bool Invertible(SquareMatrix q)
 		{
@@ -26,7 +31,7 @@ namespace NumericalAnalysis2
 			return a.IsSuccessfully();
 		}
 
-		public static T Do<T>(SquareMatrix q, T t, bool write = false)
+		public static T Do<T>(SquareMatrix q, T t, bool write)
 			where T : class, IMatrix
 		{
 			return new GaussMod().Start(q, t, write);
@@ -34,7 +39,7 @@ namespace NumericalAnalysis2
 
 		protected override bool GaussianElimination()
 		{
-			print?.Start("I Проделаем прямой ход " +
+			print?.Start("I Проделаем прямой ход ", 
 				"модифицированного метода Гаусса");
 
 			for (int k = 0; k < n; k++)

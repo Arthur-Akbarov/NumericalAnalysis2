@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D386CFC5-8B7D-4D7A-9B49-C7E41B2C584D}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{DE9489CF-2A19-4A40-A0FE-2F7B65FAE450}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <RootNamespace>NumericalAnalysis2</RootNamespace>
-    <AssemblyName>CommonLibrary.cs</AssemblyName>
+    <AssemblyName>Task5</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -32,27 +32,27 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CommonLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>D:\YandexDisk\My Documents\Visual Studio 2015\Projects\NumericalAnalysis\CommonLibrary\bin\Release\CommonLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Fredholm.cs" />
+    <Compile Include="Table.cs" />
+    <Compile Include="Task5.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Gauss.cs" />
-    <Compile Include="GaussPrint.cs" />
-    <Compile Include="IMatrix.cs" />
-    <Compile Include="GaussMod.cs" />
-    <Compile Include="Jacobi.cs" />
-    <Compile Include="Matrix.cs" />
-    <Compile Include="GaussOrd.cs" />
-    <Compile Include="Printer.cs" />
-    <Compile Include="SquareMatrix.cs" />
-    <Compile Include="Vector.cs" />
-    <Compile Include="Worker.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System" />
+    <ProjectReference Include="..\CommonLibrary.cs\CommonLibrary.csproj">
+      <Project>{d386cfc5-8b7d-4d7a-9b49-c7e41b2c584d}</Project>
+      <Name>CommonLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

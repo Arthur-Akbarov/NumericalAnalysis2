@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Linq;
+using System;
 using static System.Console;
 using static System.Math;
 using static System.String;
@@ -7,10 +8,6 @@ namespace NumericalAnalysis2
 {
 	public static class Printer
 	{
-		public static ConsoleColor colorBg = ConsoleColor.Black;
-		public static ConsoleColor colorFg = ConsoleColor.Gray;
-		public static ConsoleColor colorCfg = ConsoleColor.Green;
-
 		public static int f;
 		public static bool twoColumn;
 		/// <summary>
@@ -30,30 +27,38 @@ namespace NumericalAnalysis2
 
 		public static void Line(string format = "", params object[] arg)
 		{
-			Left(Format(format, arg));
+			Write(Format(format, arg));
 
 			if (twoColumn)
-				WriteLine();
-		}
+				Left();
 
-		public static void Left(string format = "", params object[] arg)
+			WriteLine();
+		}
+		public static void Left()
+		{
+			CursorLeft = columnSize;
+			Write('|');
+		}
+		public static void Left(string format, params object[] arg)
 		{
 			Write(Format(format, arg));
 
 			if (twoColumn)
-			{
-				CursorLeft = columnSize;
-				Write('|');
-			}
+				Left();
 			else
 				WriteLine();
 		}
 		public static void AlwaysLeft(string format = "", params object[] arg)
 		{
-			Write(Format(format, arg).PadRight(columnSize) + '|');
+			Write(format, arg);
+			Left();
 		}
 
-		public static void Right(SquareMatrix q, IMatrix t)
+		public static void RightE(double d)
+		{
+			WriteLine(Indent + " {0:E2}", d);
+		}
+		public static void Right(SquareMatrix q, IMatrix t = null)
 		{
 			int n = q.Rows;
 
@@ -68,22 +73,42 @@ namespace NumericalAnalysis2
 		{
 			WriteLine(Indent + u.ToString(f));
 		}
-		public static void Right(double d)
-		{
-			WriteLine(Indent + d.ToString(-Abs(f)));
-		}
-		public static void RightE(double d, int n = 0)
+		public static void Right(params double[] d)
 		{
 			Write(Indent);
-
+			WriteLine(Join("  ", d.Select(x => x.ToString(-Abs(f)))));
+		}
+		public static void RightArray(int ff, params double[] d)
+		{
+			Write(Indent);
+			WriteLine(Join("  ", d.Select(x => x.ToString(ff, f))));
+		}
+		public static void RightArray(int ff, params object[] args)
+		{
+			Write(Indent);
+			WriteLine(Join("  ", args.Select(x => x.ToString(ff, f))));
+		}
+		public static void NextRight(params double[] d)
+		{
 			if (twoColumn)
-				Write(new string(' ', n * (Abs(f) + 2)));
+				Left();
 
-			WriteLine(" {0:E2}", d);
+			Write(Indent);
+			WriteLine(Join("  ", d.Select(x => x.ToString(-Abs(f)))));
 		}
 		public static void Right(string format = "", params object[] arg)
 		{
 			WriteLine(Indent + Format(format, arg));
+		}
+
+		public static void AlwaysRightE(double d, int n = 0)
+		{
+			if (twoColumn)
+				Write(Indent + new string(' ', n * (Abs(f) + 2)));
+			else
+				Write(AlwaysIndent);
+
+			WriteLine(" {0:E2}", d);
 		}
 		public static void AlwaysRight(Vector u)
 		{
@@ -103,18 +128,34 @@ namespace NumericalAnalysis2
 
 			WriteLine(d.ToString(-Abs(f)));
 		}
-		public static void AlwaysRightE(double d, int n = 0)
-		{
-			if (twoColumn)
-				Write(Indent + new string(' ', n * (Abs(f) + 2)));
-			else
-				Write(AlwaysIndent);
-
-			WriteLine(" {0:E2}", d);
-		}
 		public static void AlwaysRight(string format = "", params object[] arg)
 		{
 			WriteLine(Indent + Format(format, arg));
+		}
+
+		public static void WriteColor(string s)
+		{
+			ForegroundColor = ConsoleColor.Green;
+			Write(s);
+			ForegroundColor = ConsoleColor.Gray;
+		}
+		public static void RightColor(double d)
+		{
+			ForegroundColor = ConsoleColor.Green;
+			Right(d);
+			ForegroundColor = ConsoleColor.Gray;
+		}
+		public static void RightColor(Vector u)
+		{
+			ForegroundColor = ConsoleColor.Green;
+			Right(u);
+			ForegroundColor = ConsoleColor.Gray;
+		}
+		public static void AlwaysRightColor(double d)
+		{
+			ForegroundColor = ConsoleColor.Green;
+			AlwaysRight(d);
+			ForegroundColor = ConsoleColor.Gray;
 		}
 
 		public static void StartLine(int length)
@@ -130,11 +171,16 @@ namespace NumericalAnalysis2
 			WriteLine(new string(c, (twoColumn) ? columnSize + 1 : length));
 		}
 
-		public static void ColorWrite(string s)
+		public static void OutputResidual(Vector u)
 		{
-			ForegroundColor = colorCfg;
-			Write(s);
-			ForegroundColor = colorFg;
+			string indent = new string(' ', Max(3, Abs(f) - 7));
+			string s = " {0:E2}" + indent + "{1:E2}" + indent + "{2:E2}";
+
+			Left("Вектор невязки");
+			Right(u);
+
+			Left("Его кубическая, евклидова и октаэдрическая нормы ");
+			WriteLine(Indent + s, u.N1, u.N2, u.N8);
 		}
 	}
 }

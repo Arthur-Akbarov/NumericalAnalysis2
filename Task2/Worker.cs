@@ -8,6 +8,21 @@ namespace NumericalAnalysis2
 		{
 			return q.X.Select((x, i) => 2 * x[i] - x.N8).All(x => x > 0);
 		}
+		public static SquareMatrix DiagonalInvert(this SquareMatrix q)
+		{
+			int n = q.Rows;
+			var result = new SquareMatrix(n);
+
+			for (int i = 0; i < n; i++)
+			{
+				double d = q[i, i];
+
+				if (d != 0)
+					result[i, i] = 1 / d;
+			}
+
+			return result;
+		}
 		public static SquareMatrix AboveDiagonal(this SquareMatrix q)
 		{
 			var result = q.DeepClone;
@@ -22,7 +37,7 @@ namespace NumericalAnalysis2
 		public static SquareMatrix Diagonal(this SquareMatrix q)
 		{
 			int n = q.Rows;
-			var result = new SquareMatrix(n, true);
+			var result = new SquareMatrix(n);
 
 			for (int i = 0; i < n; i++)
 				result[i, i] = q[i, i];

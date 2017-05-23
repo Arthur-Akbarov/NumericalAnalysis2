@@ -4,14 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4030FC5E-D2DD-458B-B358-3189A5B5E88C}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{D386CFC5-8B7D-4D7A-9B49-C7E41B2C584D}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <RootNamespace>NumericalAnalysis2</RootNamespace>
-    <AssemblyName>Task1.2</AssemblyName>
+    <AssemblyName>CommonLibrary.cs</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -19,9 +20,13 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>default</LangVersion>
+    <DocumentationFile>
+    </DocumentationFile>
+    <RegisterForComInterop>false</RegisterForComInterop>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,24 +37,27 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Task1_2.cs" />
-  </ItemGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommonLibrary.cs\CommonLibrary.cs.csproj">
-      <Project>{d386cfc5-8b7d-4d7a-9b49-c7e41b2c584d}</Project>
-      <Name>CommonLibrary.cs</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Task1.1\Task1_1.csproj">
-      <Project>{fe3ff39c-6944-4d3f-bf7b-0e4a9ecd1e9b}</Project>
-      <Name>Task1_1</Name>
-    </ProjectReference>
+    <Compile Include="Gauss.cs" />
+    <Compile Include="GaussPrint.cs" />
+    <Compile Include="IMatrix.cs" />
+    <Compile Include="GaussMod.cs" />
+    <Compile Include="Jacobi.cs" />
+    <Compile Include="Matrix.cs" />
+    <Compile Include="GaussOrd.cs" />
+    <Compile Include="Printer.cs" />
+    <Compile Include="SquareMatrix.cs" />
+    <Compile Include="Vector.cs" />
+    <Compile Include="Worker.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -11,7 +11,7 @@ namespace NumericalAnalysis2
 		{
 			twoColumn = true;
 
-			f = (twoColumn) ? -8 : -8;
+			f = (twoColumn) ? -10 : -10;
 
 			alwaysIndentL = 2;
 			indentL = 5;
@@ -19,7 +19,6 @@ namespace NumericalAnalysis2
 			columnSize = (twoColumn) ? 58
 				: Max(41, 3 * (Abs(f) + 2) + indentL);
 		}
-
 		static void Main(string[] args)
 		{
 			Init();
@@ -40,16 +39,22 @@ namespace NumericalAnalysis2
 			var mod = GaussMod.Do(A, B, true);
 			var det = SquareMatrix.Determinant(A, true);
 			var inv = GaussMod.Invert(A, true);
-
 			Line();
-			AlwaysLeft("X = A^(-1)*B");
-			AlwaysRight(inv * B);
-			AlwaysLeft("Число обусловленности матрицы A (окт.)");
-			AlwaysRight(A.Cond1);
+
+			var x = inv * B;
+			AlwaysLeft("X = A^(-1) * B");
+			AlwaysRight(x);
+			Line();
+
+			OutputResidual(A*x - B);
+			Line();
+
 			AlwaysLeft("Число обусловленности матрицы A (куб.)");
+			AlwaysRight(A.Cond1);
+			AlwaysLeft("Число обусловленности матрицы A (окт.)");
 			AlwaysRight(A.Cond8);
 
-			ReadLine();
+			ReadKey();
 		}
 	}
 }
